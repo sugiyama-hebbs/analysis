@@ -1,0 +1,102 @@
+---
+title: "Sales_Yahoo_prelim_analysis"
+author: "Asho Linus"
+date: "9/12/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+### Preparation ###
+source("script/linear_reg_yahoo.R")
+
+```
+
+## Abstract
+This reports simple, preliminary analyses for planning advertisement.
+It investigates the relationships among several factors, including number of order, page view, campaign, and number of order per unique customer.
+
+In summary,  
+1) page view increases orders
+2) campaign (at least ones like 5のつく日) increases sales but not page view much
+3) Synergetic effects of page view and campaign is worth noting.
+
+
+## Intro
+This is a preliminary, first analysis for deciding plans for advertisement.
+This uses sales on Yahoo from early June to Sep 2020 (See the xlsx file used for the exact dates included).
+
+This analyzes the following points:
+<br>
+<br>
+<span>(a)</span> Relationship between number of order and page view
+
+<span>(b)</span> Relationship between campaign (5のつく日) and number of order
+
+<span>(c)</span> Relationship between campaign (5のつく日) and page view
+
+<span>(d)</span> Relationship between campaign (5のつく日) and number of order per unique customer (購買率)
+
+<br>
+<span>(a)</span> is relevant to if simply increasing page view can increase sales.
+
+<span>(b), (c), (d)</span> are relevant to if campaign increases page view, number of order, or both (or neither).
+ 
+## (1) Number of Order vs Page view
+
+```{r, echo=FALSE, fig.align= "center"}
+pv_vs_no
+```
+
+The number of order (per day) does appear to increase with page view.
+The slope is about .008 - .009 (See stats below), suggesting that (suppose the linear relationship) we can increase the number of order by 8~9 by increasing the page view by 1000.
+Note that fitting is not supper-accurate and there's no guarantee of linear relationship (no other functions are tested).
+This should be examined once we get more varying page view, hopefully by new plans on advertisement.
+
+Weekday is colored differently. 
+Although page view and order are high on Sunday, using Weekday vs Weekend as a regressor doesn't show significant effect. So maybe it doesn't matter much in reality. 
+
+## (2-4) Campaign and other factors
+
+```{r, echo=FALSE, fig.align= "center"}
+fd_vs_no
+```
+
+Number of order seems high with campaign (5のつく日). 
+
+```{r, echo=FALSE, fig.align= "center"}
+fd_vs_pv
+```
+
+On the other hand, the campaign doesn't seem to increase page view, at least not much.
+
+```{r, echo=FALSE, fig.align= "center"}
+fd_vs_pv_opuc
+```
+
+This naturally leads to higher number of order per unique customer with the campaign
+
+Taken together, at least for the campaign, it increases number of order without increasing the page view much. Although it's interaction is not easy to test, perhaps increasing page view with a campaign (our own and/or Yahoo's) has synergetic effects.
+
+## Stats
+
+```{r, echo=FALSE}
+htmltools::includeHTML("stats/linear_reg_yahoo_stargazer.html")
+```
+
+
+The table shows linear regression results for models with different regressors.
+(1) is the simplest, and (3) is the most complex one (relatively. No interaction included).
+They consistently show that page view does predict number of orders.
+Campaign (five_day) also seems to be a predictor, both it's probably weeker.
+No significant effect of weekend is found, though p is not so bad.
+
+
+## Summary
+It doesn't go much beyond confirming what we believed is true, but this analysis suggests
+
+1) page view increases orders
+2) campaign (at least ones like 5のつく日) increases sales but not page view much
+3) Synergetic effects of page view and campaign is worth noting.
+
+Thus, page view and number of orders (which gives order per unique customer) can be used as good indicators for what ads influence which factor(s), thereby letting us decide what ads are effective.
+Maybe it's important to do the same analysis on other markets and confirm similar trends (can be done on only the markets with enough data though)
